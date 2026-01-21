@@ -1,4 +1,4 @@
-import fastify from 'fastify';
+import fastify from 'fastify'
 
 // Create a Fastify instance
-export const app = fastify();
+export const app = fastify()
