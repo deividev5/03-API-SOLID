@@ -1,38 +1,32 @@
 import { z } from 'zod'
-import { prisma } from '@/lib/prisma.js'
-import {hash} from 'bcryptjs'
+import { registerUseCase } from '@/use-cases/register.js'
 import { FastifyRequest, FastifyReply } from 'fastify'
 
+// Controlador para o endpoint de registro
 export async function register(request: FastifyRequest, reply: FastifyReply) {
+  
+  // Validando os dados de entrada usando Zod
   const createUserBodySchema = z.object({
     name: z.string(),
     email: z.email(),
     password: z.string().min(6),
   })
 
+  // Extraindo os dados validados do corpo da requisição
   const { name, email, password } = createUserBodySchema.parse(request.body)
 
-  const password_hash = await hash(password, 6)
-
-  const userWithSameEmail = await prisma.user.findUnique({
-    where:{
-      email,
-    }
-  })
-
-  if(userWithSameEmail){
-    return reply.status(409).send({
-      message: 'Email already registered.'
-    })
-  }
-
-  await prisma.user.create({
-    data: {
+  // Chamando o caso de uso de registro
+  try {
+    await registerUseCase({
       name,
       email,
-      password_hash,
-    },
-  })
-
+      password,
+    })
+  } catch (error) {
+    // Se ocorrer um erro (como e-mail já registrado), retornar conflito
+    return reply.status(409).send()
+  }
+  
+// Retornando uma resposta de sucesso
   return reply.status(201).send()
 }
