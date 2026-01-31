@@ -25,7 +25,8 @@ export default [
   // 3. Configurações específicas para TypeScript
   {
     rules: {
-      "camelcase": "off",
+      camelcase: 'off',
+      'no-useless-constructor': 'off',
       'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': 'error',
       // Adicione seus overrides aqui

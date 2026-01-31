@@ -1,6 +1,7 @@
 import { z } from 'zod'
-import { registerUseCase } from '@/use-cases/register.js'
+import { RegisterUseCase } from '@/use-cases/register.js'
 import { FastifyRequest, FastifyReply } from 'fastify'
+import { PrismaUsersRepository } from '@/repositories/prisma-users-repository.js'
 
 // Controlador para o endpoint de registro
 export async function register(request: FastifyRequest, reply: FastifyReply) {
@@ -16,7 +17,9 @@ export async function register(request: FastifyRequest, reply: FastifyReply) {
 
   // Chamando o caso de uso de registro
   try {
-    await registerUseCase({
+    const prismaUsersRepository = new PrismaUsersRepository()
+    const registerUseCase = new RegisterUseCase(prismaUsersRepository)
+    await registerUseCase.execute({
       name,
       email,
       password,
