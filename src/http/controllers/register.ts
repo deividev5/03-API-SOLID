@@ -4,7 +4,6 @@ import { FastifyRequest, FastifyReply } from 'fastify'
 
 // Controlador para o endpoint de registro
 export async function register(request: FastifyRequest, reply: FastifyReply) {
-  
   // Validando os dados de entrada usando Zod
   const createUserBodySchema = z.object({
     name: z.string(),
@@ -24,9 +23,9 @@ export async function register(request: FastifyRequest, reply: FastifyReply) {
     })
   } catch (error) {
     // Se ocorrer um erro (como e-mail já registrado), retornar conflito
-    return reply.status(409).send()
+    return reply.status(409).send(error)
   }
-  
-// Retornando uma resposta de sucesso
+
+  // Retornando uma resposta de sucesso
   return reply.status(201).send()
 }
