@@ -1,5 +1,6 @@
 import { hash } from 'bcryptjs'
 import { UsersRepository } from '@/repositories/users-repository.js'
+import { UserAlreadyExistsError } from './errors/user-already-exists-error.js'
 
 // Definindo a interface para o request do caso de uso
 interface RegisterUseCaseRequest {
@@ -20,7 +21,7 @@ export class RegisterUseCase {
 
     // Se o e-mail já estiver registrado, lançar um erro
     if (userWithSameEmail) {
-      throw new Error('E-mail already registered.')
+      throw new UserAlreadyExistsError()
     }
 
     // Criando o novo usuário no banco de dados

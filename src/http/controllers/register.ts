@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { RegisterUseCase } from '@/use-cases/register.js'
 import { FastifyRequest, FastifyReply } from 'fastify'
 import { PrismaUsersRepository } from '@/repositories/prisma/prisma-users-repository.js'
+import { UserAlreadyExistsError } from '@/use-cases/errors/user-already-exists-error.js'
 
 // Controlador para o endpoint de registro
 export async function register(request: FastifyRequest, reply: FastifyReply) {
@@ -15,7 +16,7 @@ export async function register(request: FastifyRequest, reply: FastifyReply) {
   // Extraindo os dados validados do corpo da requisição
   const { name, email, password } = createUserBodySchema.parse(request.body)
 
-  // Chamando o caso de uso de registro
+  // Executando o caso de uso de registro
   try {
     const prismaUsersRepository = new PrismaUsersRepository()
     const registerUseCase = new RegisterUseCase(prismaUsersRepository)
@@ -24,9 +25,14 @@ export async function register(request: FastifyRequest, reply: FastifyReply) {
       email,
       password,
     })
-  } catch (error) {
-    // Se ocorrer um erro (como e-mail já registrado), retornar conflito
-    return reply.status(409).send(error)
+    // Tratando erros específicos do caso de uso
+  } catch (err) {
+    // Se o erro for de usuário já existente, retornar 409
+    if (err instanceof UserAlreadyExistsError) {
+      return reply.status(409).send({ message: err.message })
+    }
+
+    return reply.status(500).send() // Erro genérico do servidor
   }
 
   // Retornando uma resposta de sucesso
