@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { RegisterUseCase } from '@/use-cases/register.js'
 import { FastifyRequest, FastifyReply } from 'fastify'
-import { PrismaUsersRepository } from '@/repositories/prisma-users-repository.js'
+import { PrismaUsersRepository } from '@/repositories/prisma/prisma-users-repository.js'
 
 // Controlador para o endpoint de registro
 export async function register(request: FastifyRequest, reply: FastifyReply) {

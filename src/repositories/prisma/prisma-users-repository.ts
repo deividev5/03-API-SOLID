@@ -13,4 +13,16 @@ export class PrismaUsersRepository {
     // Retornando o usuário criado
     return user
   }
+
+  // Método para encontrar um usuário pelo e-mail
+  async findByEmail(email: string) {
+    const user = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    })
+
+    // Retornando o usuário encontrado ou null
+    return user
+  }
 }
