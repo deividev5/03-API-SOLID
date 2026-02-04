@@ -1,5 +1,6 @@
 import { hash } from 'bcryptjs'
 import { UsersRepository } from '@/repositories/users-repository.js'
+import { User } from '@prisma/client'
 import { UserAlreadyExistsError } from './errors/user-already-exists-error.js'
 
 // Definindo a interface para o request do caso de uso
@@ -9,11 +10,21 @@ interface RegisterUseCaseRequest {
   password: string
 }
 
+interface RegisterUseCaseResponse {
+  user: User
+}
+
 export class RegisterUseCase {
   // Injetando o repositório de usuários via construtor
   constructor(private usersRepository: UsersRepository) {}
 
-  async execute({ name, email, password }: RegisterUseCaseRequest) {
+  // Método principal para executar o caso de uso de registro
+  async execute({
+    name,
+    email,
+    password,
+    // Desestruturando os dados do request
+  }: RegisterUseCaseRequest): Promise<RegisterUseCaseResponse> {
     // Hashing da senha antes de salvar
     const password_hash = await hash(password, 6)
 
@@ -25,10 +36,15 @@ export class RegisterUseCase {
     }
 
     // Criando o novo usuário no banco de dados
-    await this.usersRepository.create({
+    const user = await this.usersRepository.create({
       name,
       email,
       password_hash,
     })
+
+    // Retornando o usuário criado
+    return {
+      user,
+    }
   }
 }
