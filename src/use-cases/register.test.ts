@@ -62,7 +62,7 @@ describe('Register Use Case', () => {
     })
 
     // Segundo registro com o mesmo e-mail deve lançar um erro
-    expect(() =>
+    await expect(() =>
       registerUseCase.execute({
         name: 'John Doe',
         email,
