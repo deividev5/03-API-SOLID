@@ -1,16 +1,20 @@
 import { hash } from 'bcryptjs'
-import { expect, describe, it } from 'vitest'
+import { expect, describe, it, beforeEach } from 'vitest'
 import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository.js'
 import { AuthenticateUseCase } from './authenticate.js'
 import { InvalidCredentialsError } from './errors/invalid-credentials-error.js'
 
-describe('Authenticate Use Case', () => {
-  it('should be able to authenticate ', async () => {
-    // Criando uma instância do caso de uso com um repositório de usuários simulado
-    const usersRepository = new InMemoryUsersRepository()
-    // Criando uma instância do caso de uso de autenticação
-    const sut = new AuthenticateUseCase(usersRepository)
+// Variáveis para armazenar o repositório simulado e o caso de uso de autenticação
+let usersRepository: InMemoryUsersRepository
+let sut: AuthenticateUseCase
 
+describe('Authenticate Use Case', () => {
+  // Antes de cada teste, inicializa o repositório simulado e o caso de uso de autenticação
+  beforeEach(() => {
+    usersRepository = new InMemoryUsersRepository()
+    sut = new AuthenticateUseCase(usersRepository)
+  })
+  it('should be able to authenticate ', async () => {
     // Criando um usuário no repositório simulado
     await usersRepository.create({
       name: 'John Doe',
@@ -28,11 +32,6 @@ describe('Authenticate Use Case', () => {
   })
 
   it('should not be able to authenticate with wrong email', async () => {
-    // Criando uma instância do caso de uso com um repositório de usuários simulado
-    const usersRepository = new InMemoryUsersRepository()
-    // Criando uma instância do caso de uso de autenticação
-    const sut = new AuthenticateUseCase(usersRepository)
-
     // Executando o caso de uso de autenticação com um email incorreto
     await expect(
       () =>
@@ -45,11 +44,6 @@ describe('Authenticate Use Case', () => {
   })
 
   it('should not be able to authenticate with wrong password', async () => {
-    // Criando uma instância do caso de uso com um repositório de usuários simulado
-    const usersRepository = new InMemoryUsersRepository()
-    // Criando uma instância do caso de uso de autenticação
-    const sut = new AuthenticateUseCase(usersRepository)
-
     // Criando um usuário no repositório simulado
     await usersRepository.create({
       name: 'John Doe',
