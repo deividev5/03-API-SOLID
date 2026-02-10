@@ -1,9 +1,21 @@
+import { Prisma, User } from '@prisma/client'
 import { prisma } from '@/lib/prisma.js'
-import { Prisma } from '@prisma/client'
-export { prisma } from '@/lib/prisma.js'
 
 // Implementando o repositório de usuários usando Prisma
 export class PrismaUsersRepository {
+  // Método para encontrar um usuário pelo ID
+  async findById(id: string): Promise<User | null> {
+    const user = await prisma.user.findUnique({
+      where: {
+        id,
+      },
+    })
+    if (!user) {
+      throw new Error('User not found')
+    }
+    return user
+  }
+
   // Método para criar um novo usuário
   async create(data: Prisma.UserCreateInput) {
     const user = await prisma.user.create({
