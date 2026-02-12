@@ -37,7 +37,7 @@ describe('Get User Profile Use Case', () => {
   // Teste para verificar se o caso de uso lança um erro quando o ID do usuário não existe
   it('should not be able to get user profile with wrong id', async () => {
     // Verificando se o caso de uso lança um erro do tipo ResourceNotFoundError quando o ID do usuário não existe
-    expect(() =>
+    await expect(() =>
       sut.execute({
         userId: 'non-existing-id',
       }),
