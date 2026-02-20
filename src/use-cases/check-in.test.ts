@@ -1,6 +1,7 @@
-import { expect, describe, it, beforeEach } from 'vitest'
+import { expect, describe, it, beforeEach, vi } from 'vitest'
 import { InMemoryCheckInsRepository } from '@/repositories/in-memory/in-memory/in-memory-check-ins-repository.js'
 import { CheckInUseCase } from './check-ins.js'
+import { afterEach } from 'node:test'
 
 // Variáveis para armazenar o repositório simulado e o caso de uso de check-in
 let checkInsRepository: InMemoryCheckInsRepository
@@ -11,6 +12,15 @@ describe('Check-In Use Case', () => {
   beforeEach(() => {
     checkInsRepository = new InMemoryCheckInsRepository()
     sut = new CheckInUseCase(checkInsRepository)
+
+    // Configura o ambiente de teste para usar timers falsos, permitindo simular o tempo durante os testes
+    vi.useFakeTimers()
+  })
+
+  // Após cada teste, restaura os timers reais para evitar interferências entre os testes
+  afterEach(() => {
+    // Restaura os timers reais após cada teste para evitar interferências entre os testes
+    vi.useRealTimers()
   })
 
   it('should check-in a user', async () => {
@@ -21,6 +31,48 @@ describe('Check-In Use Case', () => {
     })
 
     // Verificando se o check-in foi criado com um ID válido
+    expect(checkIn.id).toEqual(expect.any(String))
+  })
+
+  // Teste para verificar se um usuário não pode fazer check-in duas vezes no mesmo dia
+  it('should not able to check-in twice in the same day', async () => {
+    // Simulando o tempo para garantir que ambos os check-ins ocorram no mesmo dia
+    vi.setSystemTime(new Date(2024, 0, 20, 8, 0, 0))
+
+    // Realizando o primeiro check-in
+    await sut.execute({
+      gymId: 'gym-01',
+      userId: 'user-01',
+    })
+
+    // Tentando realizar o segundo check-in no mesmo dia e esperando que lance um erro
+    await expect(() =>
+      sut.execute({
+        gymId: 'gym-01',
+        userId: 'user-01',
+      }),
+    ).rejects.toBeInstanceOf(Error)
+  })
+
+  // Teste para verificar se um usuário pode fazer check-in em dias diferentes
+  it('should be able to check-in on different days', async () => {
+    // Simulando o tempo para o primeiro check-in
+    vi.setSystemTime(new Date(2024, 0, 20, 8, 0, 0))
+
+    await sut.execute({
+      gymId: 'gym-01',
+      userId: 'user-01',
+    })
+
+    // Simulando o tempo para o segundo check-in no dia seguinte
+    vi.setSystemTime(new Date(2024, 0, 21, 8, 0, 0))
+
+    const { checkIn } = await sut.execute({
+      gymId: 'gym-01',
+      userId: 'user-01',
+    })
+
+    // Verificando se o segundo check-in foi criado com um ID válido, confirmando que o usuário pode fazer check-in em dias diferentes
     expect(checkIn.id).toEqual(expect.any(String))
   })
 })
