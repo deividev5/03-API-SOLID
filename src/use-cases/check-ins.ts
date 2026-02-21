@@ -1,10 +1,14 @@
 import { CheckInsRepository } from '@/repositories/check-ins-repository.js'
+import { GymsRepository } from '@/repositories/gyms-repository.js'
+import { ResourceNotFoundError } from './errors/resource-not-found-error.js'
 import { CheckIn } from '@prisma/client'
 
 // Definindo a interface para o request do caso de uso de check-in, contendo os dados necessários para criar um check-in
 interface CheckInUseCaseRequest {
   userId: string
   gymId: string
+  userLatitude: number
+  userLongitude: number
 }
 
 interface CheckInUseCaseResponse {
@@ -12,8 +16,11 @@ interface CheckInUseCaseResponse {
 }
 
 export class CheckInUseCase {
-  // Injetando o repositório de check-ins via construtor
-  constructor(private checkInsRepository: CheckInsRepository) {}
+  // Injetando as dependências dos repositórios de check-ins e de academias no construtor da classe
+  constructor(
+    private checkInsRepository: CheckInsRepository,
+    private gymsRepository: GymsRepository,
+  ) {}
 
   // Método principal para executar o caso de uso de check-in
   async execute({
@@ -21,6 +28,15 @@ export class CheckInUseCase {
     gymId,
     // Desestruturando os dados do request
   }: CheckInUseCaseRequest): Promise<CheckInUseCaseResponse> {
+    // Verificando se a academia existe no banco de dados
+    const gym = await this.gymsRepository.findById(gymId)
+
+    if (!gym) {
+      throw new ResourceNotFoundError()
+    }
+
+    // calculando a distancia entre o usuário e a academia
+
     const checkInOnSameDay = await this.checkInsRepository.findByUserIdOnDate(
       userId,
       new Date(),
