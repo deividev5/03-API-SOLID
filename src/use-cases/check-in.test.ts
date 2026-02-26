@@ -23,8 +23,8 @@ describe('Check-In Use Case', () => {
       title: 'JavaScript Gym',
       description: '',
       phone: '',
-      latitude: new Decimal(0),
-      longitude: new Decimal(0),
+      latitude: new Decimal(-27.2092052),
+      longitude: new Decimal(-49.6401091),
       created_at: new Date(),
     })
 
@@ -99,5 +99,26 @@ describe('Check-In Use Case', () => {
 
     // Verificando se o segundo check-in foi criado com um ID válido, confirmando que o usuário pode fazer check-in em dias diferentes
     expect(checkIn.id).toEqual(expect.any(String))
+  })
+
+  it('Should not be able to check-in on distance greater than 100 meters', async () => {
+    gymsRepository.items.push({
+      id: 'gym-02',
+      title: 'JavaScript Gym',
+      description: '',
+      phone: '',
+      latitude: new Decimal(-27.2092052),
+      longitude: new Decimal(-38.9680911),
+      created_at: new Date(),
+    })
+
+    await expect(() =>
+      sut.execute({
+        gymId: 'gym-01',
+        userId: 'user-01',
+        userLatitude: -12.5986426,
+        userLongitude: -49.6401091,
+      }),
+    ).rejects.toBeInstanceOf(Error)
   })
 })

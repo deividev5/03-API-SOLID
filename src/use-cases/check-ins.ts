@@ -2,6 +2,7 @@ import { CheckInsRepository } from '@/repositories/check-ins-repository.js'
 import { GymsRepository } from '@/repositories/gyms-repository.js'
 import { ResourceNotFoundError } from './errors/resource-not-found-error.js'
 import { CheckIn } from '@prisma/client'
+import { getDistanceBetweenCoordinates } from '@/utils/get-distance-between-coordinates.js'
 
 // Definindo a interface para o request do caso de uso de check-in, contendo os dados necessários para criar um check-in
 interface CheckInUseCaseRequest {
@@ -26,6 +27,9 @@ export class CheckInUseCase {
   async execute({
     userId,
     gymId,
+    userLatitude,
+    userLongitude,
+
     // Desestruturando os dados do request
   }: CheckInUseCaseRequest): Promise<CheckInUseCaseResponse> {
     // Verificando se a academia existe no banco de dados
@@ -36,6 +40,24 @@ export class CheckInUseCase {
     }
 
     // calculando a distancia entre o usuário e a academia
+    const distance = getDistanceBetweenCoordinates(
+      {
+        latitude: userLatitude,
+        longitude: userLongitude,
+      },
+      {
+        latitude: gym.latitude.toNumber(),
+        longitude: gym.longitude.toNumber(),
+      },
+    )
+
+    // Verificando se a distância entre o usuário e a academia é maior do que a distância máxima permitida para realizar o check-in
+    const MAX_DISTANCE_IN_KILOMETERS = 0.1
+
+    // Se a distância for maior do que a distância máxima permitida, lança um erro para indicar que o check-in não pode ser realizado
+    if (distance > MAX_DISTANCE_IN_KILOMETERS) {
+      throw new Error()
+    }
 
     const checkInOnSameDay = await this.checkInsRepository.findByUserIdOnDate(
       userId,
