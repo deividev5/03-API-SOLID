@@ -4,6 +4,8 @@ import { InMemoryGymsRepository } from '@/repositories/in-memory/in-memory-gyms-
 import { Decimal } from '@prisma/client/runtime/library.js'
 import { CheckInUseCase } from './check-ins.js'
 import { afterEach } from 'node:test'
+import { MaxNumberOfCheckInsError } from './errors/max-number-of-checks-ins-error.js'
+import { MaxDistanceError } from './errors/max-distance-error.js'
 
 // Variáveis para armazenar o repositório simulado e o caso de uso de check-in
 let checkInsRepository: InMemoryCheckInsRepository
@@ -12,13 +14,14 @@ let sut: CheckInUseCase
 
 describe('Check-In Use Case', () => {
   // Antes de cada teste, inicializa o repositório simulado e o caso de uso de check-in
-  beforeEach(() => {
+  beforeEach(async () => {
     checkInsRepository = new InMemoryCheckInsRepository()
+
     gymsRepository = new InMemoryGymsRepository()
     sut = new CheckInUseCase(checkInsRepository, gymsRepository)
 
     // Adiciona uma academia ao repositório simulado para ser usada nos testes
-    gymsRepository.items.push({
+    await gymsRepository.createGym({
       id: 'gym-01',
       title: 'JavaScript Gym',
       description: '',
@@ -72,7 +75,7 @@ describe('Check-In Use Case', () => {
         userLatitude: -27.2092052,
         userLongitude: -49.6401091,
       }),
-    ).rejects.toBeInstanceOf(Error)
+    ).rejects.toBeInstanceOf(MaxNumberOfCheckInsError)
   })
 
   // Teste para verificar se um usuário pode fazer check-in em dias diferentes
@@ -101,7 +104,9 @@ describe('Check-In Use Case', () => {
     expect(checkIn.id).toEqual(expect.any(String))
   })
 
+  // Teste para verificar se um usuário não pode fazer check-in quando estiver a uma distância maior do que a permitida
   it('Should not be able to check-in on distance greater than 100 meters', async () => {
+    // Adicionando uma nova academia ao repositório simulado para testar a distância
     gymsRepository.items.push({
       id: 'gym-02',
       title: 'JavaScript Gym',
@@ -112,6 +117,7 @@ describe('Check-In Use Case', () => {
       created_at: new Date(),
     })
 
+    // Tentando realizar o check-in em uma academia que está a uma distância maior do que a permitida e esperando que lance um erro
     await expect(() =>
       sut.execute({
         gymId: 'gym-01',
@@ -119,6 +125,6 @@ describe('Check-In Use Case', () => {
         userLatitude: -12.5986426,
         userLongitude: -49.6401091,
       }),
-    ).rejects.toBeInstanceOf(Error)
+    ).rejects.toBeInstanceOf(MaxDistanceError)
   })
 })

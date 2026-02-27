@@ -1,6 +1,6 @@
+import { randomUUID } from 'node:crypto'
 import { GymsRepository } from '../gyms-repository.js'
-
-import { Gym } from '@prisma/client'
+import { Gym, Prisma } from '@prisma/client'
 
 // Implementação do repositório de academias em memória, que simula o comportamento de um banco de dados para fins de teste
 export class InMemoryGymsRepository implements GymsRepository {
@@ -16,6 +16,25 @@ export class InMemoryGymsRepository implements GymsRepository {
     }
 
     // Se a academia for encontrada, retorna a academia encontrada
+    return gym
+  }
+
+  // Método para criar uma nova academia, recebendo os dados da academia
+  async createGym(data: Prisma.GymCreateInput) {
+    const gym = {
+      id: data.id ?? randomUUID(),
+      title: data.title,
+      description: data.description ?? null,
+      phone: data.phone ?? null,
+      latitude: new Prisma.Decimal(data.latitude.toString()),
+      longitude: new Prisma.Decimal(data.longitude.toString()),
+      created_at: new Date(),
+    }
+
+    // Adiciona a nova academia ao array de academias em memória
+    this.items.push(gym)
+
+    // Retorna a academia criada
     return gym
   }
 }
