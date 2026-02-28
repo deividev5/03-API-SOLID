@@ -35,6 +35,11 @@ export class InMemoryCheckInsRepository implements CheckInsRepository {
     return checkInOnSameDate
   }
 
+  // Método para contar o número de check-ins de um usuário
+  async countByUserId(userId: string) {
+    return this.items.filter((checkIn) => checkIn.user_id === userId).length
+  }
+
   async findManyByUserId(userId: string, page: number) {
     // Filtrando os check-ins do usuário e paginando os resultados
     const checkIns = this.items
