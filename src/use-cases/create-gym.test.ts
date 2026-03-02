@@ -24,7 +24,7 @@ describe('Create Gym Use Case', () => {
       created_at: new Date(),
     })
 
-    // Verificando se o usuário foi criado com um ID válido
+    // Verificando se a academia foi criada corretamente, verificando se o ID é uma string
     expect(gym.id).toEqual(expect.any(String))
   })
 })

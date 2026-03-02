@@ -19,6 +19,13 @@ export class InMemoryGymsRepository implements GymsRepository {
     return gym
   }
 
+  // Método para buscar academias com base em uma consulta de texto e paginação, retornando um array de academias que correspondem à consulta
+  async searchMany(query: string, page: number) {
+    return this.items
+      .filter((item) => item.title.toLowerCase().includes(query.toLowerCase()))
+      .slice((page - 1) * 20, page * 20)
+  }
+
   // Método para criar uma nova academia, recebendo os dados da academia
   async createGym(data: Prisma.GymCreateInput) {
     const gym = {
