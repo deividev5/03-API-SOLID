@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto'
-import { GymsRepository } from '../gyms-repository.js'
+import { GymsRepository, FindManyNeabyParams } from '../gyms-repository.js'
 import { Gym, Prisma } from '@prisma/client'
+import { getDistanceBetweenCoordinates } from '@/utils/get-distance-between-coordinates.js'
 
 // Implementação do repositório de academias em memória, que simula o comportamento de um banco de dados para fins de teste
 export class InMemoryGymsRepository implements GymsRepository {
@@ -17,6 +18,22 @@ export class InMemoryGymsRepository implements GymsRepository {
 
     // Se a academia for encontrada, retorna a academia encontrada
     return gym
+  }
+
+  // Método para encontrar academias próximas com base em coordenadas de latitude e longitude, retornando um array de academias próximas
+  async findManyNeaby(params: FindManyNeabyParams) {
+    // Filtra as academias em memória para encontrar aquelas que estão próximas das coordenadas fornecidas, usando a função de cálculo de distância entre coordenadas
+    return this.items.filter((item) => {
+      const distance = getDistanceBetweenCoordinates(
+        { latitude: params.latitude, longitude: params.longitude },
+        {
+          latitude: item.latitude.toNumber(),
+          longitude: item.longitude.toNumber(),
+        },
+      )
+      // Considera uma academia como próxima se a distância for menor que 10 km
+      return distance < 10
+    })
   }
 
   // Método para buscar academias com base em uma consulta de texto e paginação, retornando um array de academias que correspondem à consulta
