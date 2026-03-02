@@ -35,6 +35,29 @@ export class InMemoryCheckInsRepository implements CheckInsRepository {
     return checkInOnSameDate
   }
 
+  // Método para encontrar um check-in por ID
+  async findById(id: string) {
+    // Filtrando os check-ins para encontrar um que corresponda ao ID fornecido
+    const checkIn = this.items.filter((checkIn) => checkIn.id === id)
+
+    // Retornando o check-in encontrado ou null se não for encontrado
+    return checkIn ? checkIn[0] : null
+  }
+
+  // Método para salvar um check-in, atualizando-o se já existir ou adicionando um novo check-in
+  async save(checkIn: CheckIn) {
+    // Encontrando o índice do check-in a ser salvo no array de itens
+    const checkInIndex = this.items.findIndex((item) => item.id === checkIn.id)
+
+    // Se o check-in já existir, atualiza o item no array; caso contrário, não faz nada (o check-in será adicionado apenas pelo método create)
+    if (checkInIndex >= 0) {
+      this.items[checkInIndex] = checkIn
+    }
+
+    // Retornando o check-in salvo, seja ele atualizado ou não
+    return checkIn
+  }
+
   // Método para contar o número de check-ins de um usuário
   async countByUserId(userId: string) {
     return this.items.filter((checkIn) => checkIn.user_id === userId).length
