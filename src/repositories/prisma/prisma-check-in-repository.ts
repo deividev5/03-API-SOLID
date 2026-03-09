@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma.js'
-import { Prisma } from '@prisma/client'
+import { CheckIn, Prisma } from '@prisma/client'
 import dayjs from 'dayjs'
 
 // Repositório de check-ins em memória para testes
@@ -30,6 +30,48 @@ export class InMemoryCheckInsRepository {
 
     // Retorna o check-in encontrado que ocorreu no mesmo dia para o usuário
     return checkInOnSameDate
+  }
+
+  // Método par contar o número de check-ins de um usuário específico
+  async countByUserId(userId: string) {
+    // Contando o número de check-ins para um usuário específico
+    const count = await prisma.checkIn.count({
+      where: {
+        user_id: userId,
+      },
+    })
+
+    // Retornando a contagem de check-ins para o usuário
+    return count
+  }
+
+  // Método para encontrar muitos check-ins por usuário e página
+  async findManyByUserId(userId: string, page: number) {
+    // Encontrando muitos check-ins para um usuário específico, paginados por 20 itens por página
+    const checkIns = await prisma.checkIn.findMany({
+      where: {
+        user_id: userId,
+      },
+      take: 20,
+      skip: (page - 1) * 20,
+    })
+
+    // Retornando os check-ins encontrados para o usuário e página especificados
+    return checkIns
+  }
+
+  // Método salvar um check-in atualizado
+  async save(data: CheckIn) {
+    // Atualizando o check-in no banco de dados usando o Prisma
+    const checkin = await prisma.checkIn.update({
+      where: {
+        id: data.id,
+      },
+      data,
+    })
+
+    // Retornando o check-in atualizado
+    return checkin
   }
 
   // Criando um novo check-in
