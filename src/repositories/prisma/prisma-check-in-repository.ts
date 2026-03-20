@@ -4,7 +4,7 @@ import dayjs from 'dayjs'
 import { CheckInsRepository } from '../check-ins-repository.js'
 
 // Repositório de check-ins em memória para testes
-export class InMemoryCheckInsRepository implements CheckInsRepository {
+export class PrismaCheckInsRepository implements CheckInsRepository {
   // Método para encontrar um check-in por usuário e data
   async findByUserIdOnDate(userId: string, date: Date) {
     // Calculando o início e o fim do dia para a data fornecida

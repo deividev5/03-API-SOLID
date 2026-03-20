@@ -6,7 +6,7 @@ import {
 } from '@/repositories/gyms-repository.js'
 
 // Implementação do repositório de academias em memória, que simula o comportamento de um banco de dados para fins de teste
-export class InMemoryGymsRepository implements GymsRepository {
+export class PrismaGymsRepository implements GymsRepository {
   // Método para encontrar uma academia pelo seu ID, retornando a academia encontrada ou null se não for encontrada
   async findById(id: string) {
     const gym = prisma.gym.findUnique({
