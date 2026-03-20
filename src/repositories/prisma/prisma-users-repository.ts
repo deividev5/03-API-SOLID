@@ -1,8 +1,9 @@
 import { Prisma } from '@prisma/client'
 import { prisma } from '@/lib/prisma.js'
+import { UsersRepository } from '../users-repository.js'
 
 // Implementando o repositório de usuários usando Prisma
-export class PrismaUsersRepository {
+export class PrismaUsersRepository implements UsersRepository {
   // Método para encontrar um usuário pelo ID
   async findById(id: string) {
     const user = await prisma.user.findUnique({

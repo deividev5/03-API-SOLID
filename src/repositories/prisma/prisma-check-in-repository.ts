@@ -1,9 +1,10 @@
 import { prisma } from '@/lib/prisma.js'
 import { CheckIn, Prisma } from '@prisma/client'
 import dayjs from 'dayjs'
+import { CheckInsRepository } from '../check-ins-repository.js'
 
 // Repositório de check-ins em memória para testes
-export class InMemoryCheckInsRepository {
+export class InMemoryCheckInsRepository implements CheckInsRepository {
   // Método para encontrar um check-in por usuário e data
   async findByUserIdOnDate(userId: string, date: Date) {
     // Calculando o início e o fim do dia para a data fornecida
@@ -58,6 +59,19 @@ export class InMemoryCheckInsRepository {
 
     // Retornando os check-ins encontrados para o usuário e página especificados
     return checkIns
+  }
+
+  // Método para encontrar um check-in por ID
+  findById(id: string) {
+    // Encontrando um check-in por ID usando o Prisma
+    const checkIn = prisma.checkIn.findUnique({
+      where: {
+        id,
+      },
+    })
+
+    // Retornando o check-in encontrado ou null se não for encontrado
+    return checkIn || null
   }
 
   // Método salvar um check-in atualizado
