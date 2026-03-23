@@ -20,10 +20,23 @@ export async function authenticate(
   try {
     // Criando uma instância do caso de uso de autenticação
     const authenticateUseCase = makeAuthenticateUseCase()
-    await authenticateUseCase.execute({
+    const { user } = await authenticateUseCase.execute({
       email,
       password,
     })
+
+    // Gerando um token JWT para o usuário autenticado
+    const token = await reply.jwtSign(
+      {},
+      {
+        sign: {
+          sub: user.id,
+        },
+      },
+    )
+
+    // Retornando o token JWT na resposta
+    return reply.status(201).send({ token })
     // Tratando erros específicos do caso de uso
   } catch (err) {
     // Se o erro for de credenciais inválidas, retornar 401

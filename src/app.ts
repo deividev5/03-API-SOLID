@@ -2,12 +2,19 @@ import fastify from 'fastify'
 import { appRoutes } from '@/http/routes.js'
 import { ZodError, z } from 'zod'
 import { env } from './env/index.js'
+import fastifyJwt from '@fastify/jwt'
 
 // Create a Fastify instance
 export const app = fastify()
 
 app.register(appRoutes)
 
+// register the JWT plugin with the secret from environment variables
+app.register(fastifyJwt, {
+  secret: env.JWT_SECRET,
+})
+
+// Global error handler for the application
 app.setErrorHandler((error, _, reply) => {
   if (error instanceof ZodError) {
     return reply
