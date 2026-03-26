@@ -9,9 +9,9 @@ import type { Environment } from 'vitest/environments'
 // e troca o schema no final do URl para a nossa que vamos usar
 function generateDatabaseUrl(schema: string) {
   // caso não tenha um URL válida, retornamos um erro.
-  if (process.env.DATABASE_URL) {
+  if (!process.env.DATABASE_URL) {
     throw new Error(
-      'DATABASE_URL environment variable is already set. Please unset it before running the tests.',
+      'DATABASE_URL environment variable is not set. Please unset it before running the tests.',
     )
   }
 
