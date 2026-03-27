@@ -36,7 +36,7 @@ export async function authenticate(
     )
 
     // Retornando o token JWT na resposta
-    return reply.status(201).send({ token })
+    return reply.status(200).send({ token })
     // Tratando erros específicos do caso de uso
   } catch (err) {
     // Se o erro for de credenciais inválidas, retornar 401
@@ -46,7 +46,4 @@ export async function authenticate(
 
     throw err
   }
-
-  // Retornando uma resposta de sucesso
-  return reply.status(201).send()
 }
