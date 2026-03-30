@@ -1,10 +1,10 @@
 import { FastifyInstance } from 'fastify'
-import { register } from '@/http/controllers/register.js'
-import { authenticate } from './controllers/authenticate.js'
-import { profile } from './controllers/profile.js'
-import { verifyJwt } from './middleware/verify-jwt.js'
+import { register } from '@/http/controllers/users/register.js'
+import { authenticate } from './authenticate.js'
+import { profile } from './profile.js'
+import { verifyJwt } from '../../middleware/verify-jwt.js'
 
-export async function appRoutes(app: FastifyInstance) {
+export async function appRoutesUsers(app: FastifyInstance) {
   // Rota para registrar um novo usuário
   app.post('/users', register)
   // Rota para autenticar um usuário e obter um token JWT

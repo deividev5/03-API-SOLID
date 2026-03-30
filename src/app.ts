@@ -1,13 +1,16 @@
 import fastify from 'fastify'
-import { appRoutes } from '@/http/routes.js'
+
 import { ZodError, z } from 'zod'
 import { env } from './env/index.js'
 import fastifyJwt from '@fastify/jwt'
+import { appRoutesUsers } from './http/controllers/users/routes.js'
+import { appRoutesGyms } from './http/controllers/gyms/routes.js'
 
 // Create a Fastify instance
 export const app = fastify()
 
-app.register(appRoutes)
+app.register(appRoutesUsers)
+app.register(appRoutesGyms)
 
 // register the JWT plugin with the secret from environment variables
 app.register(fastifyJwt, {
