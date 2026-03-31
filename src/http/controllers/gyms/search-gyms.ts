@@ -11,17 +11,19 @@ export async function searchGyms(request: FastifyRequest, reply: FastifyReply) {
   })
 
   // Extraindo os dados validados do corpo da requisição
-  const { query, page } = searchGymsQuerySchema.parse(request.body)
+  const { query, page } = searchGymsQuerySchema.parse(request.query)
 
   // Criando uma instância do caso de uso de busca de academias
   const searchGymsUseCase = makeSearchGymsUseCase()
 
   // Executando o caso de uso com os dados validados
-  await searchGymsUseCase.execute({
+  const { gyms } = await searchGymsUseCase.execute({
     query,
     page,
   })
 
   // Retornando uma resposta de sucesso
-  return reply.status(200).send()
+  return reply.status(200).send({
+    gyms,
+  })
 }

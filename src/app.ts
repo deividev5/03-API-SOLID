@@ -5,12 +5,14 @@ import { env } from './env/index.js'
 import fastifyJwt from '@fastify/jwt'
 import { appRoutesUsers } from './http/controllers/users/routes.js'
 import { appRoutesGyms } from './http/controllers/gyms/routes.js'
+import { appRoutesCheckIns } from './http/controllers/check-ins/route.js'
 
 // Create a Fastify instance
 export const app = fastify()
 
 app.register(appRoutesUsers)
 app.register(appRoutesGyms)
+app.register(appRoutesCheckIns)
 
 // register the JWT plugin with the secret from environment variables
 app.register(fastifyJwt, {

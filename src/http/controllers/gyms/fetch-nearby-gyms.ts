@@ -18,16 +18,20 @@ export async function fetchNearbyGyms(
   })
 
   // Extraindo os dados validados do corpo da requisição
-  const { latitude, longitude } = fetchNearbyGymsQuerySchema.parse(request.body)
+  const { latitude, longitude } = fetchNearbyGymsQuerySchema.parse(
+    request.query,
+  )
 
   // Criando uma instância do caso de uso de busca de academias
   const fetchNearbyGymsUseCase = makeFetchNearbyGymsUseCase()
   // Executando o caso de uso com os dados validados
-  await fetchNearbyGymsUseCase.execute({
+  const { gyms } = await fetchNearbyGymsUseCase.execute({
     latitude,
     longitude,
   })
 
   // Retornando uma resposta de sucesso
-  return reply.status(200).send()
+  return reply.status(200).send({
+    gyms,
+  })
 }

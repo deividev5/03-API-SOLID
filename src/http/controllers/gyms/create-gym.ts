@@ -24,7 +24,7 @@ export async function createGym(request: FastifyRequest, reply: FastifyReply) {
   // Executando o caso de uso de criação de academia
 
   const createGymsUseCase = makeCreateGymsUseCase()
-  await createGymsUseCase.execute({
+  const { gym } = await createGymsUseCase.execute({
     title,
     description,
     phone,
@@ -34,5 +34,7 @@ export async function createGym(request: FastifyRequest, reply: FastifyReply) {
   })
 
   // Retornando uma resposta de sucesso
-  return reply.status(201).send()
+  return reply.status(201).send({
+    gym,
+  })
 }
