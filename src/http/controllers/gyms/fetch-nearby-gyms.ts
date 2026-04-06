@@ -9,10 +9,10 @@ export async function fetchNearbyGyms(
 ) {
   // Validando os dados de entrada usando Zod
   const fetchNearbyGymsQuerySchema = z.object({
-    latitude: z.number().refine((value) => {
+    latitude: z.coerce.number().refine((value) => {
       return Math.abs(value) <= 90
     }),
-    longitude: z.number().refine((value) => {
+    longitude: z.coerce.number().refine((value) => {
       return Math.abs(value) <= 180
     }),
   })
