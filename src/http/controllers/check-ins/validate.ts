@@ -18,6 +18,7 @@ export async function validateCheckIn(
   // Criando uma instância do caso de uso de validação de check-in
   const validateCheckInUseCase = makeValidateCheckInUseCase()
 
+  // Executando o caso de uso para validar o check-in
   await validateCheckInUseCase.execute({
     id: checkInId,
   })

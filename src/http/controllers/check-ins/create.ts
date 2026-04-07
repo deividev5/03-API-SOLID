@@ -29,7 +29,7 @@ export async function createCheckIn(
 
   // Criando uma instância do caso de uso de check-in
   const createCheckInUseCase = makeCheckInsUseCase()
-  await createCheckInUseCase.execute({
+  const checkIn = await createCheckInUseCase.execute({
     gymId,
     userId: request.user.sub,
     userLatitude: latitude,
@@ -37,5 +37,5 @@ export async function createCheckIn(
   })
 
   // Retornando uma resposta de sucesso
-  return reply.status(201).send()
+  return reply.status(201).send(checkIn)
 }
