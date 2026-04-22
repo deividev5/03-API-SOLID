@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "start": "node build/server.cjs",
-    
     "build": "tsup src --out-dir build",
     "test": "vitest run --project unit",
     "test:watch": "vitest --project unit",
@@ -40,6 +39,7 @@
     "vitest": "4.0.18"
   },
   "dependencies": {
+    "@fastify/cookie": "11.0.2",
     "@fastify/jwt": "10.0.0",
     "@prisma/client": "4.10.1",
     "@types/bcryptjs": "2.4.6",

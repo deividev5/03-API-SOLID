@@ -35,8 +35,27 @@ export async function authenticate(
       },
     )
 
+    // Gerando um token JWT para o usuário autenticado
+    const refreshToken = await reply.jwtSign(
+      {},
+      {
+        sign: {
+          sub: user.id,
+          expiresIn: '7d', // Refresh token expira em 7 dias
+        },
+      },
+    )
+
     // Retornando o token JWT na resposta
-    return reply.status(200).send({ token })
+    return reply
+      .setCookie('refreshToken', refreshToken, {
+        path: '/',
+        secure: true, // Somente enviar o cookie em conexões seguras (HTTPS)
+        httpOnly: true, // Impede o acesso ao cookie via JavaScript
+        sameSite: true, // Impede o envio do cookie em requisições cross-site
+      })
+      .status(200)
+      .send({ token })
     // Tratando erros específicos do caso de uso
   } catch (err) {
     // Se o erro for de credenciais inválidas, retornar 401
